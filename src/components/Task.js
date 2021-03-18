@@ -1,9 +1,4 @@
-import {
-  ContextMenu,
-  MenuItem,
-  ContextMenuTrigger,
-  SubMenu,
-} from 'react-contextmenu'
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu'
 import * as FaIcons from 'react-icons/fa'
 
 const Task = ({
@@ -11,13 +6,14 @@ const Task = ({
   delTask,
   color,
   changeColor,
-  edit,
   icon,
   changeIcon,
+  edit,
+  id,
 }) => {
   return (
     <>
-      <ContextMenuTrigger id={task}>
+      <ContextMenuTrigger id={id}>
         <div className="task" style={{ backgroundColor: `${color}` }}>
           {icon === 'cake' ? (
             <FaIcons.FaBirthdayCake className="cake" />
@@ -30,43 +26,43 @@ const Task = ({
         </div>
       </ContextMenuTrigger>
 
-      <ContextMenu className="contextMenu" id={task}>
-        <MenuItem onClick={() => edit(task)}>edit</MenuItem>
+      <ContextMenu className="contextMenu" id={id}>
+        <MenuItem onClick={() => edit(id)}>edit</MenuItem>
 
-        <MenuItem className="menuItem" onClick={() => delTask(task)}>
+        <MenuItem className="menuItem" onClick={() => delTask(id)}>
           delete
         </MenuItem>
         <MenuItem className="colorContainer">
           <MenuItem
             className="circle red"
-            onClick={() => changeColor(task, '#ffb3ba')}
+            onClick={() => changeColor(id, '#ffb3ba')}
           ></MenuItem>
           <MenuItem
             className="circle orange"
-            onClick={() => changeColor(task, '#ffdfba')}
+            onClick={() => changeColor(id, '#ffdfba')}
           ></MenuItem>
           <MenuItem
             className="circle yellow"
-            onClick={() => changeColor(task, '#ffffba')}
+            onClick={() => changeColor(id, '#ffffba')}
           ></MenuItem>
           <MenuItem
             className="circle green"
-            onClick={() => changeColor(task, '#baffc9')}
+            onClick={() => changeColor(id, '#baffc9')}
           ></MenuItem>
           <MenuItem
             className="circle blue"
-            onClick={() => changeColor(task, '#bae1ff')}
+            onClick={() => changeColor(id, '#bae1ff')}
           ></MenuItem>
         </MenuItem>
 
         <MenuItem className="colorContainer">
-          <MenuItem onClick={() => changeIcon(task, 'cake')}>
+          <MenuItem onClick={() => changeIcon(id, 'cake')}>
             <FaIcons.FaBirthdayCake />
           </MenuItem>
-          <MenuItem onClick={() => changeIcon(task, 'plane')}>
+          <MenuItem onClick={() => changeIcon(id, 'plane')}>
             <FaIcons.FaPlane />
           </MenuItem>
-          <MenuItem onClick={() => changeIcon(task, '')}>""</MenuItem>
+          <MenuItem onClick={() => changeIcon(id, '')}>""</MenuItem>
         </MenuItem>
       </ContextMenu>
     </>
@@ -74,21 +70,3 @@ const Task = ({
 }
 
 export default Task
-
-/* <SubMenu className="subMenu" title="change color">
-  <MenuItem onClick={() => changeColor(task, 'red')} className="colors">
-    red
-  </MenuItem>
-  <MenuItem
-    onClick={() => changeColor(task, 'green')}
-    className="colors"
-  >
-    green
-  </MenuItem>
-  <MenuItem
-    onClick={() => changeColor(task, 'rgb(41,182,246)')}
-    className="colors"
-  >
-    blue
-  </MenuItem>
-</SubMenu> */

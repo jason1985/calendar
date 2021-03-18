@@ -1,4 +1,5 @@
 import { useEffect, useState, React, useRef } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import Modal from 'react-modal'
 import Task from './Task'
 
@@ -48,19 +49,22 @@ const Day = ({ date, today }) => {
   const onClose = () => {
     setModalOpen(false)
     if (text === '') return
-    setItems((oldVal) => [...oldVal, { icon: '', color: 'white', task: text }])
+    setItems((oldVal) => [
+      ...oldVal,
+      { id: uuidv4(), icon: '', color: '#bae1ff', task: text },
+    ])
   }
 
   const removeTask = (id) => {
-    setItems(items.filter((item) => item.task !== id))
+    setItems(items.filter((item) => item.id !== id))
     console.log('removing a task')
   }
 
   const changeColor = (id, color) => {
     setItems(
       items.map((item) => {
-        if (item.task === id) {
-          return { icon: item.icon, color: color, task: item.task }
+        if (item.id === id) {
+          return { id: item.id, icon: item.icon, color: color, task: item.task }
         }
         return item
       })
@@ -70,8 +74,8 @@ const Day = ({ date, today }) => {
   const changeIcon = (id, icon) => {
     setItems(
       items.map((item) => {
-        if (item.task === id) {
-          return { icon: icon, color: item.color, task: item.task }
+        if (item.id === id) {
+          return { id: item.id, icon: icon, color: item.color, task: item.task }
         }
         return item
       })
@@ -84,8 +88,8 @@ const Day = ({ date, today }) => {
 
     setItems(
       items.map((item) => {
-        if (item.task === editId) {
-          return { icon: item.icon, color: item.color, task: text }
+        if (item.id === editId) {
+          return { id: item.id, icon: item.icon, color: item.color, task: text }
         }
         return item
       })
@@ -115,7 +119,7 @@ const Day = ({ date, today }) => {
       >
         <p>add</p>
         <input
-          spellcheck="false"
+          spellCheck="false"
           ref={inputRef}
           onKeyPress={handelKeyPress}
           onChange={(e) => setText(e.target.value)}
@@ -123,6 +127,7 @@ const Day = ({ date, today }) => {
           value={text}
         />
         <button onClick={onClose}> ok </button>
+        test
       </Modal>
       <Modal
         className="modal"
@@ -143,6 +148,7 @@ const Day = ({ date, today }) => {
       </Modal>
       {items.map((item) => (
         <Task
+          id={item.id}
           icon={item.icon}
           changeIcon={changeIcon}
           edit={handleEdit}

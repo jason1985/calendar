@@ -1,5 +1,6 @@
 import './App.css'
 import { useState, useEffect } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import Day from './components/Day'
 
 const sundayFirst = [
@@ -83,7 +84,7 @@ export default function App() {
     let temp = []
     let numOfDays = getNumDaysOfCurrentMonth() + 1
     for (let i = 1; i < numOfDays; i++) {
-      temp.push(0)
+      temp.push(uuidv4())
     }
     setDates(temp)
 
@@ -93,7 +94,7 @@ export default function App() {
     let filler = getFirstDayOfCurrentMonth()
     temp = []
     for (let i = 0; i < filler + msFiller; i++) {
-      temp.push(0)
+      temp.push(uuidv4())
     }
     setStartFiller(temp)
   }, [days])
@@ -112,7 +113,7 @@ export default function App() {
 
       let temp = []
       for (let i = 0; i < fillAmt + meFiller; i++) {
-        temp.push(0)
+        temp.push(uuidv4())
       }
 
       setEndFiller(temp)
@@ -149,18 +150,20 @@ export default function App() {
       <div className="monthName">{currentMonth}</div>
       <div className="weekdays">
         {days.map((day) => (
-          <div className="weekday">{day}</div>
+          <div key={day} className="weekday">
+            {day}
+          </div>
         ))}
       </div>
       <div className="month">
         {startFiller.map((day) => (
-          <div className="fillerday"></div>
+          <div key={day} className="fillerday"></div>
         ))}
         {dates.map((num, index) => (
-          <Day date={index + 1} today={today} />
+          <Day key={num} date={index + 1} today={today} />
         ))}
         {endFiller.map((day) => (
-          <div className="fillerday"></div>
+          <div key={day} className="fillerday"></div>
         ))}
       </div>
       <button onClick={weekdayToggle}>monday first toggle</button>
