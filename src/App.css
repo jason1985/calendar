@@ -1,38 +1,251 @@
-.App {
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding:0;
+}
+
+#root{
+height: 100vh;
+/* background-image: linear-gradient(315deg, #7ee8fa 0%, #80ff72 74%); */
+background-color: black;
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+.fillerday {
+  background-color: #b1acac;
+  border: solid black 1px;
+}
+
+.day {
+  padding-top: 1.5px;
+  padding-left: 1.5px;
+  background-color: #ffffff;
+  overflow: hidden;
+  border: solid black 1px;
+  font-size: small;
+}
+
+.cake {
+  margin-right: 2px;
+}
+
+.icons {
+  /* display: inline-block;
+  vertical-align: middle; */
+  padding-top: 2px;
+  margin-right: 2px;
+}
+
+.task {
+  margin: .05rem;
+  padding-left: .2rem;
+  font-size: small;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor:default;
+  border-radius: 5px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.month {
+  height: 80vh;
+  width: 70vw;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+}
+.weekdays{
+  width: 70vw;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size:medium;
+}
+.weekday {
+  overflow: hidden;
+  border: 1px black solid;
+  background-color: #ffffff;
+  padding: 1px 0;
+}
+.monthName {
+  font-size: 5rem;
+  color: rgb(119, 110, 110);
+}
+
+.today {
+  border: solid red 1.5px;
+  border-radius: 50%;
+}
+
+.modal {
+  background-color: rgb(41,182,246);
+  box-shadow: rgba(0,0,0,0.19) 0px 10px 30px, rgba(0,0,0,0.23) 0px 6px 10px;
+  border-radius: 4%;
+  height: 100px;
+  width: 220px;
+}
+
+.overlay {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+p {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
+input {
+  margin-left: .7rem;
+}
+
+button{
+  padding: 0 .2rem;
+  margin-left: .7rem;
+}
+
+
+
+
+
+
+
+.react-contextmenu {
+  background-color: rgb(143, 140, 140);
+  /* background-clip: padding-box; */
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: .25rem;
+  color: #373a3c;
+  font-size: small;
+  margin: 2px 0 0;
+  /* min-width: 160px; */
+  outline: none;
+  opacity: 0;
+  padding: 1px 3px;
   pointer-events: none;
+  text-align: left;
+  transition: opacity 250ms ease !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.react-contextmenu.react-contextmenu--visible {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 9999;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.react-contextmenu-item {
+  background: 0 0;
+  border: 0;
   color: white;
+cursor: pointer;
+  font-weight: 400;
+  line-height: 1.5; 
+  /* padding: 3px 20px; */
+  text-align: inherit;
+  white-space: nowrap;
 }
 
-.App-link {
-  color: #61dafb;
+.react-contextmenu-item.react-contextmenu-item--active,
+.react-contextmenu-item.react-contextmenu-item--selected {
+  /* color: #fff;
+  background-color: #20a0ff;
+  border-color: #20a0ff;
+  text-decoration: none; */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.react-contextmenu-item.react-contextmenu-item--disabled,
+.react-contextmenu-item.react-contextmenu-item--disabled:hover {
+  background-color: transparent;
+  border-color: rgba(0,0,0,.15);
+  color: #878a8c;
 }
+
+.react-contextmenu-item--divider {
+  border-bottom: 1px solid rgba(0,0,0,.15);
+  cursor: inherit;
+  margin-bottom: 3px;
+  padding: 2px 0;
+}
+.react-contextmenu-item--divider:hover {
+  background-color: transparent;
+  border-color: rgba(0,0,0,.15);
+}
+
+.react-contextmenu-item.react-contextmenu-submenu {
+padding: 0;
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item {
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item:after {
+  content: "▶";
+  display: inline-block;
+  position: absolute;
+  right: 7px;
+}
+
+.example-multiple-targets::after {
+  content: attr(data-count);
+  display: block;
+}
+
+
+.colorContainer {
+  display: flex;
+  /* justify-content: space-between; */
+  /* height: 10px; */
+}
+
+.circle {
+  margin:  1px;
+  padding: 0;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+ }
+ 
+
+ /* .blueCircle {
+   background-color: rgb(41,182,246);
+ } */
+
+ .red {
+   background-color: #ffb3ba;
+ }
+ .orange {
+   background-color: #ffdfba;
+ }
+ .yellow {
+   background-color: #ffffba;
+ }
+ .green {
+   background-color: #baffc9;
+ }
+ .blue {
+   background-color: #bae1ff;
+ }
+ 
+ 
+
+
+
+ 
+
+
+
