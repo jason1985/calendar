@@ -27,7 +27,7 @@ const Task = ({
       </ContextMenuTrigger>
 
       <ContextMenu className="contextMenu" id={id}>
-        <MenuItem onClick={() => edit(id)}>edit</MenuItem>
+        <MenuItem onClick={() => edit(id, task)}>edit</MenuItem>
 
         <MenuItem className="menuItem" onClick={() => delTask(id)}>
           delete

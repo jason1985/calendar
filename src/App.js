@@ -80,47 +80,58 @@ export default function App() {
   const [meFiller, setmeFiller] = useState(0)
   const [monFirst, setMonFirst] = useState(false)
 
+  const [calendarInfo, setCalendarInfo] = useState({})
+
   useEffect(() => {
-    let temp = []
+    //if calendarInfo is in storage update our cal
+    //if not then create it
+    if (localStorage.getItem('calendarInfo') === null) {
+      localStorage.setItem('calendarInfo', JSON.stringify(calendarInfo))
+      console.log('created calendarInfo in local storage')
+    } else {
+      let info = JSON.parse(localStorage.getItem('calendarInfo'))
+      setCalendarInfo(info)
+      // console.log('got calendarInfo from local storage')
+      // console.log(info)
+    }
+  }, [])
+
+  useEffect(() => {
+    let tempDates = []
     let numOfDays = getNumDaysOfCurrentMonth() + 1
     for (let i = 1; i < numOfDays; i++) {
-      temp.push(uuidv4())
+      tempDates.push(uuidv4())
     }
-    setDates(temp)
-
-    setCurrentMonth(getCurrentMonth())
-    setToday(getTodaysDate())
 
     let filler = getFirstDayOfCurrentMonth()
-    temp = []
+    let tempStartFiller = []
     for (let i = 0; i < filler + msFiller; i++) {
-      temp.push(uuidv4())
+      tempStartFiller.push(uuidv4())
     }
-    setStartFiller(temp)
-  }, [days])
 
-  useEffect(
-    () => {
-      let fillAmt = getFirstDayOfCurrentMonth()
-      let daysUsed = dates.length + fillAmt
+    let fillAmt = getFirstDayOfCurrentMonth()
+    let daysUsed = tempDates.length + fillAmt
 
-      if (daysUsed < 35) {
-        fillAmt = 35 - daysUsed
-      } else if (daysUsed < 42) {
-        fillAmt = 42 - daysUsed
-        // calendarElement.style.gridTemplateRows = 'repeat(6,1fr)'
-      }
+    if (daysUsed < 35) {
+      fillAmt = 35 - daysUsed
+    } else if (daysUsed < 42) {
+      fillAmt = 42 - daysUsed
+      // calendarElement.style.gridTemplateRows = 'repeat(6,1fr)'
+    }
 
-      let temp = []
-      for (let i = 0; i < fillAmt + meFiller; i++) {
-        temp.push(uuidv4())
-      }
+    let tempEndFiller = []
+    for (let i = 0; i < fillAmt + meFiller; i++) {
+      tempEndFiller.push(uuidv4())
+    }
 
-      setEndFiller(temp)
-    },
-    [dates],
-    [days]
-  )
+    setCurrentMonth(getCurrentMonth())
+
+    setStartFiller(tempStartFiller)
+    setDates(tempDates)
+    setEndFiller(tempEndFiller)
+
+    setToday(getTodaysDate())
+  }, [meFiller, msFiller])
 
   const weekdayToggle = () => {
     if (monFirst === true) {
@@ -141,8 +152,6 @@ export default function App() {
     }
     setDays(mondayFirst)
     setMonFirst(true)
-    console.log('wkdytgl')
-    console.log(days)
   }
 
   return (
@@ -160,7 +169,12 @@ export default function App() {
           <div key={day} className="fillerday"></div>
         ))}
         {dates.map((num, index) => (
-          <Day key={num} date={index + 1} today={today} />
+          <Day
+            calendarinfo={calendarInfo}
+            key={num}
+            date={index + 1}
+            today={today}
+          />
         ))}
         {endFiller.map((day) => (
           <div key={day} className="fillerday"></div>

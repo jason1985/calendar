@@ -5,7 +5,7 @@ import Task from './Task'
 
 Modal.setAppElement('#root')
 
-const Day = ({ date, today }) => {
+const Day = ({ date, today, calendarinfo }) => {
   const [items, setItems] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -14,6 +14,14 @@ const Day = ({ date, today }) => {
 
   const inputRef = useRef()
   const editInputRef = useRef()
+
+  useEffect(() => {
+    updateItemsFromStorage()
+  }, [])
+
+  useEffect(() => {
+    updateStorage()
+  }, [items])
 
   useEffect(() => {
     if (modalOpen === true) {
@@ -34,7 +42,7 @@ const Day = ({ date, today }) => {
   const handelKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (modalOpen === true) {
-        onClose()
+        addItem()
       } else if (editModalOpen === true) {
         editModalClose()
       }
@@ -46,18 +54,19 @@ const Day = ({ date, today }) => {
     setText('')
   }
 
-  const onClose = () => {
+  const addItem = () => {
     setModalOpen(false)
     if (text === '') return
     setItems((oldVal) => [
       ...oldVal,
       { id: uuidv4(), icon: '', color: '#bae1ff', task: text },
     ])
+    // updateStorage()
   }
 
   const removeTask = (id) => {
     setItems(items.filter((item) => item.id !== id))
-    console.log('removing a task')
+    // updateStorage()
   }
 
   const changeColor = (id, color) => {
@@ -69,6 +78,7 @@ const Day = ({ date, today }) => {
         return item
       })
     )
+    // updateStorage()
   }
 
   const changeIcon = (id, icon) => {
@@ -80,6 +90,7 @@ const Day = ({ date, today }) => {
         return item
       })
     )
+    // updateStorage()
   }
 
   const editModalClose = () => {
@@ -94,12 +105,43 @@ const Day = ({ date, today }) => {
         return item
       })
     )
+    // updateStorage()
   }
 
-  const handleEdit = (id) => {
+  const handleEdit = (id, task) => {
     setEditId(id)
-    setText(id)
+    setText(task)
     setEditModalOpen(true)
+  }
+
+  const updateItemsFromStorage = () => {
+    if (calendarinfo[date] === undefined) {
+      // console.log("it's undefined")
+    } else {
+      setItems(
+        calendarinfo[date].map((item) => {
+          return {
+            id: uuidv4(),
+            icon: item.icon,
+            color: item.color,
+            task: item.task,
+          }
+        })
+      )
+    }
+  }
+
+  const updateStorage = () => {
+    let arr = items.map((item) => {
+      return { icon: item.icon, color: item.color, task: item.task }
+    })
+
+    let obj = JSON.parse(localStorage.getItem('calendarInfo'))
+    obj = { ...obj, [date]: arr }
+
+    localStorage.setItem(`calendarInfo`, JSON.stringify(obj))
+    // console.log('updated calendarInfo localstorage:')
+    // console.log(obj)
   }
 
   return (
@@ -115,7 +157,7 @@ const Day = ({ date, today }) => {
         className="modal"
         overlayClassName="overlay"
         isOpen={modalOpen}
-        onRequestClose={onClose}
+        onRequestClose={addItem}
       >
         <p>add</p>
         <input
@@ -126,8 +168,7 @@ const Day = ({ date, today }) => {
           type="text"
           value={text}
         />
-        <button onClick={onClose}> ok </button>
-        test
+        <button onClick={addItem}> ok </button>
       </Modal>
       <Modal
         className="modal"
@@ -148,6 +189,7 @@ const Day = ({ date, today }) => {
       </Modal>
       {items.map((item) => (
         <Task
+          key={item.id}
           id={item.id}
           icon={item.icon}
           changeIcon={changeIcon}
