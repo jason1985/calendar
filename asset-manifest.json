@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/jasons-calendar/static/css/main.6c819881.chunk.css",
+    "main.js": "/jasons-calendar/static/js/main.88a872ee.chunk.js",
+    "main.js.map": "/jasons-calendar/static/js/main.88a872ee.chunk.js.map",
+    "runtime-main.js": "/jasons-calendar/static/js/runtime-main.0fc002af.js",
+    "runtime-main.js.map": "/jasons-calendar/static/js/runtime-main.0fc002af.js.map",
+    "static/js/2.29d5d8a5.chunk.js": "/jasons-calendar/static/js/2.29d5d8a5.chunk.js",
+    "static/js/2.29d5d8a5.chunk.js.map": "/jasons-calendar/static/js/2.29d5d8a5.chunk.js.map",
+    "index.html": "/jasons-calendar/index.html",
+    "static/css/main.6c819881.chunk.css.map": "/jasons-calendar/static/css/main.6c819881.chunk.css.map",
+    "static/js/2.29d5d8a5.chunk.js.LICENSE.txt": "/jasons-calendar/static/js/2.29d5d8a5.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0fc002af.js",
+    "static/js/2.29d5d8a5.chunk.js",
+    "static/css/main.6c819881.chunk.css",
+    "static/js/main.88a872ee.chunk.js"
+  ]
+}
