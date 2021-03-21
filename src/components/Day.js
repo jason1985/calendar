@@ -12,6 +12,8 @@ const Day = ({ date, today, calendarinfo }) => {
   const [text, setText] = useState('')
   const [editId, setEditId] = useState('')
 
+  const [updated, setUpdated] = useState(false)
+
   const inputRef = useRef()
   const editInputRef = useRef()
 
@@ -20,8 +22,11 @@ const Day = ({ date, today, calendarinfo }) => {
   }, [])
 
   useEffect(() => {
-    updateStorage()
-  }, [items])
+    if (updated) {
+      updateStorage()
+      setUpdated(false)
+    }
+  }, [updated])
 
   useEffect(() => {
     if (modalOpen === true) {
@@ -61,12 +66,12 @@ const Day = ({ date, today, calendarinfo }) => {
       ...oldVal,
       { id: uuidv4(), icon: '', color: '#bae1ff', task: text },
     ])
-    // updateStorage()
+    setUpdated(true)
   }
 
   const removeTask = (id) => {
     setItems(items.filter((item) => item.id !== id))
-    // updateStorage()
+    setUpdated(true)
   }
 
   const changeColor = (id, color) => {
@@ -78,7 +83,7 @@ const Day = ({ date, today, calendarinfo }) => {
         return item
       })
     )
-    // updateStorage()
+    setUpdated(true)
   }
 
   const changeIcon = (id, icon) => {
@@ -90,7 +95,7 @@ const Day = ({ date, today, calendarinfo }) => {
         return item
       })
     )
-    // updateStorage()
+    setUpdated(true)
   }
 
   const editModalClose = () => {
@@ -105,7 +110,7 @@ const Day = ({ date, today, calendarinfo }) => {
         return item
       })
     )
-    // updateStorage()
+    setUpdated(true)
   }
 
   const handleEdit = (id, task) => {
@@ -121,7 +126,7 @@ const Day = ({ date, today, calendarinfo }) => {
       setItems(
         calendarinfo[date].map((item) => {
           return {
-            id: uuidv4(),
+            id: item.id,
             icon: item.icon,
             color: item.color,
             task: item.task,
@@ -132,12 +137,12 @@ const Day = ({ date, today, calendarinfo }) => {
   }
 
   const updateStorage = () => {
-    let arr = items.map((item) => {
-      return { icon: item.icon, color: item.color, task: item.task }
-    })
+    // let arr = items.map((item) => {
+    //   return { icon: item.icon, color: item.color, task: item.task }
+    // })
 
     let obj = JSON.parse(localStorage.getItem('calendarInfo'))
-    obj = { ...obj, [date]: arr }
+    obj = { ...obj, [date]: items }
 
     localStorage.setItem(`calendarInfo`, JSON.stringify(obj))
     // console.log('updated calendarInfo localstorage:')
@@ -178,7 +183,7 @@ const Day = ({ date, today, calendarinfo }) => {
       >
         <p>edit</p>
         <input
-          spellcheck="false"
+          spellCheck="false"
           ref={editInputRef}
           onKeyPress={handelKeyPress}
           onChange={(e) => setText(e.target.value)}

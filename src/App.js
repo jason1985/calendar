@@ -1,7 +1,9 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import moment from 'moment'
 import Day from './components/Day'
+import Switch from 'react-switch'
 
 const sundayFirst = [
   'Sunday',
@@ -24,48 +26,23 @@ const mondayFirst = [
 ]
 
 function getCurrentMonth() {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
-  let date = new Date()
-  let todaysMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
-  return months[todaysMonth.getMonth()]
+  return moment().format('MMMM')
 }
 
 //returns total number of days for the current month
 function getNumDaysOfCurrentMonth() {
-  let todaysDate = new Date()
-  let totalDays = new Date(
-    todaysDate.getFullYear(),
-    todaysDate.getMonth() + 1,
-    0
-  )
-  return totalDays.getDate()
+  console.log('num of days this month:')
+  console.log(moment().endOf('month').format('D'))
+  return parseInt(moment().endOf('month').format('D'))
 }
 
 function getTodaysDate() {
-  let todaysDate = new Date()
-  return todaysDate.getDate()
+  return parseInt(moment().format('D'))
 }
 
 //returns 0 for Sunday, 1 for Monday, etc...
 function getFirstDayOfCurrentMonth() {
-  let todaysDate = new Date()
-  let firstDay = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
-
-  return firstDay.getDay()
+  return parseInt(moment().startOf('month').format('d'))
 }
 
 export default function App() {
@@ -80,9 +57,13 @@ export default function App() {
   const [meFiller, setmeFiller] = useState(0)
   const [monFirst, setMonFirst] = useState(false)
 
+  const [extraRow, setExtraRow] = useState(false)
+
   const [calendarInfo, setCalendarInfo] = useState({})
 
-  useEffect(() => {
+  //this might be better as an async call because it takes time to do
+  //causeds a small bug but seems ok now that I put getCalendar inside Mondaytoggle
+  const getCalendar = () => {
     //if calendarInfo is in storage update our cal
     //if not then create it
     if (localStorage.getItem('calendarInfo') === null) {
@@ -94,9 +75,15 @@ export default function App() {
       // console.log('got calendarInfo from local storage')
       // console.log(info)
     }
+  }
+
+  useEffect(() => {
+    getCalendar()
   }, [])
 
   useEffect(() => {
+    // getCalendar()
+
     let tempDates = []
     let numOfDays = getNumDaysOfCurrentMonth() + 1
     for (let i = 1; i < numOfDays; i++) {
@@ -114,9 +101,11 @@ export default function App() {
 
     if (daysUsed < 35) {
       fillAmt = 35 - daysUsed
+      setExtraRow(false)
     } else if (daysUsed < 42) {
       fillAmt = 42 - daysUsed
       // calendarElement.style.gridTemplateRows = 'repeat(6,1fr)'
+      setExtraRow(true)
     }
 
     let tempEndFiller = []
@@ -134,6 +123,7 @@ export default function App() {
   }, [meFiller, msFiller])
 
   const weekdayToggle = () => {
+    getCalendar()
     if (monFirst === true) {
       setmsFiller(0)
       setmeFiller(0)
@@ -164,7 +154,7 @@ export default function App() {
           </div>
         ))}
       </div>
-      <div className="month">
+      <div className={`month ${extraRow ? 'extra-row' : ''}`}>
         {startFiller.map((day) => (
           <div key={day} className="fillerday"></div>
         ))}
@@ -180,7 +170,23 @@ export default function App() {
           <div key={day} className="fillerday"></div>
         ))}
       </div>
-      <button onClick={weekdayToggle}>monday first toggle</button>
+      <div className="monday-switch">
+        <span>Monday first</span>
+        <Switch
+          onChange={weekdayToggle}
+          checked={monFirst}
+          className="react-switch"
+          onColor="#86d3ff"
+          onHandleColor="#2693e6"
+          handleDiameter={25}
+          uncheckedIcon={false}
+          checkedIcon={false}
+          boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+          activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+          height={20}
+          width={48}
+        />
+      </div>
     </div>
   )
 }
