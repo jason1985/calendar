@@ -29,6 +29,10 @@ function getCurrentMonth() {
   return moment().format('MMMM')
 }
 
+function getCurrentYear() {
+  return moment().format('Y')
+}
+
 //returns total number of days for the current month
 function getNumDaysOfCurrentMonth() {
   console.log('num of days this month:')
@@ -46,44 +50,27 @@ function getFirstDayOfCurrentMonth() {
 }
 
 export default function App() {
-  const [dates, setDates] = useState([])
-  const [days, setDays] = useState(sundayFirst)
+  const [dates, setDates] = useState([]) //date array to loop over for everyday of month
+  const [days, setDays] = useState(sundayFirst) // sun-sat or mon-sun
   const [currentMonth, setCurrentMonth] = useState('')
   const [today, setToday] = useState('')
   const [startFiller, setStartFiller] = useState([])
   const [endFiller, setEndFiller] = useState([])
 
-  const [msFiller, setmsFiller] = useState(0)
-  const [meFiller, setmeFiller] = useState(0)
+  const [msFiller, setmsFiller] = useState(0) //mon-sun filler offset
+  const [meFiller, setmeFiller] = useState(0) // ""
   const [monFirst, setMonFirst] = useState(false)
 
-  const [extraRow, setExtraRow] = useState(false)
+  const [extraRow, setExtraRow] = useState(false) //some months requires 6 grid rows instead of 5
 
-  const [calendarInfo, setCalendarInfo] = useState({})
-
-  //this might be better as an async call because it takes time to do
-  //causeds a small bug but seems ok now that I put getCalendar inside Mondaytoggle
-  const getCalendar = () => {
-    //if calendarInfo is in storage update our cal
-    //if not then create it
-    if (localStorage.getItem('calendarInfo') === null) {
-      localStorage.setItem('calendarInfo', JSON.stringify(calendarInfo))
-      console.log('created calendarInfo in local storage')
-    } else {
-      let info = JSON.parse(localStorage.getItem('calendarInfo'))
-      setCalendarInfo(info)
-      // console.log('got calendarInfo from local storage')
-      // console.log(info)
-    }
-  }
+  const [displayedCal, setDisplayedCal] = useState({}) //the current Calendar on screen. ex: March 2021
+  //{month: "March",year: "2021"}
 
   useEffect(() => {
-    getCalendar()
+    setDisplayedCal({ month: getCurrentMonth(), year: getCurrentYear() })
   }, [])
 
   useEffect(() => {
-    // getCalendar()
-
     let tempDates = []
     let numOfDays = getNumDaysOfCurrentMonth() + 1
     for (let i = 1; i < numOfDays; i++) {
@@ -123,7 +110,6 @@ export default function App() {
   }, [meFiller, msFiller])
 
   const weekdayToggle = () => {
-    getCalendar()
     if (monFirst === true) {
       setmsFiller(0)
       setmeFiller(0)
@@ -144,6 +130,8 @@ export default function App() {
     setMonFirst(true)
   }
 
+  console.log(displayedCal)
+
   return (
     <div className="container">
       <div className="monthName">{currentMonth}</div>
@@ -160,7 +148,7 @@ export default function App() {
         ))}
         {dates.map((num, index) => (
           <Day
-            calendarinfo={calendarInfo}
+            current={displayedCal}
             key={num}
             date={index + 1}
             today={today}

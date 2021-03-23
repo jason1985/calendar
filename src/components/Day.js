@@ -1,17 +1,17 @@
 import { useEffect, useState, React, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import _ from 'lodash'
 import Modal from 'react-modal'
 import Task from './Task'
 
 Modal.setAppElement('#root')
 
-const Day = ({ date, today, calendarinfo }) => {
+const Day = ({ date, today, current }) => {
   const [items, setItems] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [text, setText] = useState('')
   const [editId, setEditId] = useState('')
-
   const [updated, setUpdated] = useState(false)
 
   const inputRef = useRef()
@@ -120,11 +120,12 @@ const Day = ({ date, today, calendarinfo }) => {
   }
 
   const updateItemsFromStorage = () => {
-    if (calendarinfo[date] === undefined) {
-      // console.log("it's undefined")
-    } else {
+    let info = JSON.parse(localStorage.getItem('calendarInfo'))
+
+    //if it's not null/undefined then map it
+    if (info[current.year][current.month][date]) {
       setItems(
-        calendarinfo[date].map((item) => {
+        info[current.year][current.month][date].map((item) => {
           return {
             id: item.id,
             icon: item.icon,
@@ -137,16 +138,16 @@ const Day = ({ date, today, calendarinfo }) => {
   }
 
   const updateStorage = () => {
-    // let arr = items.map((item) => {
-    //   return { icon: item.icon, color: item.color, task: item.task }
-    // })
+    // if it doesn't exist at all create an empty object {}
+    if (localStorage.getItem('calendarInfo') === null) {
+      localStorage.setItem('calendarInfo', JSON.stringify({}))
+    }
 
-    let obj = JSON.parse(localStorage.getItem('calendarInfo'))
-    obj = { ...obj, [date]: items }
+    let years = JSON.parse(localStorage.getItem('calendarInfo'))
 
-    localStorage.setItem(`calendarInfo`, JSON.stringify(obj))
-    // console.log('updated calendarInfo localstorage:')
-    // console.log(obj)
+    _.set(years, `${current.year}.${current.month}.${date}`, items)
+
+    localStorage.setItem('calendarInfo', JSON.stringify(years))
   }
 
   return (
