@@ -25,34 +25,13 @@ const mondayFirst = [
   'Sunday',
 ]
 
-function getCurrentMonth() {
-  return moment().format('MMMM')
-}
-
-function getCurrentYear() {
-  return moment().format('Y')
-}
-
-//returns total number of days for the current month
-function getNumDaysOfCurrentMonth() {
-  console.log('num of days this month:')
-  console.log(moment().endOf('month').format('D'))
-  return parseInt(moment().endOf('month').format('D'))
-}
-
 function getTodaysDate() {
   return parseInt(moment().format('D'))
-}
-
-//returns 0 for Sunday, 1 for Monday, etc...
-function getFirstDayOfCurrentMonth() {
-  return parseInt(moment().startOf('month').format('d'))
 }
 
 export default function App() {
   const [dates, setDates] = useState([]) //date array to loop over for everyday of month
   const [days, setDays] = useState(sundayFirst) // sun-sat or mon-sun
-  const [currentMonth, setCurrentMonth] = useState('')
   const [today, setToday] = useState('')
   const [startFiller, setStartFiller] = useState([])
   const [endFiller, setEndFiller] = useState([])
@@ -64,77 +43,94 @@ export default function App() {
   const [extraRow, setExtraRow] = useState(false) //some months requires 6 grid rows instead of 5
 
   const [displayedCal, setDisplayedCal] = useState({}) //the current Calendar on screen. ex: March 2021
-  //{month: "March",year: "2021"}
+  const [calOffset, setCalOffset] = useState(0)
+
+  //set displayedCal to current month & year
+  useEffect(() => {
+    getMonth(calOffset)
+  }, [calOffset])
 
   useEffect(() => {
-    setDisplayedCal({ month: getCurrentMonth(), year: getCurrentYear() })
-  }, [])
+    ///////////////
 
-  useEffect(() => {
+    if (monFirst === false) {
+      setmsFiller(0)
+      setmeFiller(0)
+      setDays(sundayFirst)
+    }
+    if (monFirst === true) {
+      setDays(mondayFirst)
+      // -1 sunday add 6 msfiller
+      // +1 sunday sub 6 mefiller
+      if (displayedCal.firstDay === 0) {
+        setmsFiller(6)
+        setmeFiller(-6)
+      } else {
+        setmsFiller(-1)
+        setmeFiller(1)
+      }
+    }
+
+    //dates filler
     let tempDates = []
-    let numOfDays = getNumDaysOfCurrentMonth() + 1
-    for (let i = 1; i < numOfDays; i++) {
+    for (let i = 1; i < displayedCal.totalDays + 1; i++) {
       tempDates.push(uuidv4())
     }
 
-    let filler = getFirstDayOfCurrentMonth()
+    //start filler
+    let filler = displayedCal.firstDay + msFiller
     let tempStartFiller = []
-    for (let i = 0; i < filler + msFiller; i++) {
+    for (let i = 0; i < filler; i++) {
       tempStartFiller.push(uuidv4())
     }
 
-    let fillAmt = getFirstDayOfCurrentMonth()
-    let daysUsed = tempDates.length + fillAmt
+    //end filler
+    let fillAmt // = displayedCal.firstDay + meFiller
+    let daysUsed = tempDates.length + tempStartFiller.length
 
-    if (daysUsed < 35) {
+    if (daysUsed <= 35) {
       fillAmt = 35 - daysUsed
       setExtraRow(false)
-    } else if (daysUsed < 42) {
+    } else if (daysUsed <= 42) {
       fillAmt = 42 - daysUsed
       // calendarElement.style.gridTemplateRows = 'repeat(6,1fr)'
       setExtraRow(true)
     }
 
+    if (fillAmt === 7) fillAmt = 0 //edge case if feb only needs 4 rows for 28 days
+
     let tempEndFiller = []
-    for (let i = 0; i < fillAmt + meFiller; i++) {
+    for (let i = 0; i < fillAmt; i++) {
       tempEndFiller.push(uuidv4())
     }
-
-    setCurrentMonth(getCurrentMonth())
 
     setStartFiller(tempStartFiller)
     setDates(tempDates)
     setEndFiller(tempEndFiller)
 
     setToday(getTodaysDate())
-  }, [meFiller, msFiller])
+  }, [monFirst, meFiller, msFiller, displayedCal])
 
-  const weekdayToggle = () => {
-    if (monFirst === true) {
-      setmsFiller(0)
-      setmeFiller(0)
-      setDays(sundayFirst)
-      setMonFirst(false)
-      return
-    }
-    // -1 sunday add 6 msfiller
-    // +1 sunday sub 6 mefiller
-    if (getFirstDayOfCurrentMonth() === 0) {
-      setmeFiller(-6)
-      setmsFiller(6)
-    } else {
-      setmeFiller(1)
-      setmsFiller(-1)
-    }
-    setDays(mondayFirst)
-    setMonFirst(true)
+  function getMonth(offset) {
+    // setmsFiller(0)
+    // setmeFiller(0)
+    setDisplayedCal({
+      month: moment().add(offset, 'month').format('MMMM'),
+      year: moment().add(offset, 'month').format('y'),
+      firstDay: parseInt(
+        moment().add(offset, 'month').startOf('month').format('d')
+      ),
+      totalDays: parseInt(
+        moment().add(offset, 'month').endOf('month').format('D')
+      ),
+    })
   }
-
-  console.log(displayedCal)
 
   return (
     <div className="container">
-      <div className="monthName">{currentMonth}</div>
+      <div className="monthName">
+        {displayedCal.month} {displayedCal.year}
+      </div>
       <div className="weekdays">
         {days.map((day) => (
           <div key={day} className="weekday">
@@ -158,10 +154,15 @@ export default function App() {
           <div key={day} className="fillerday"></div>
         ))}
       </div>
+      <div>
+        <button onClick={() => setCalOffset(calOffset - 1)}>prev</button>
+        <button onClick={() => setCalOffset(0)}>current</button>
+        <button onClick={() => setCalOffset(calOffset + 1)}>next</button>
+      </div>
       <div className="monday-switch">
         <span>Monday first</span>
         <Switch
-          onChange={weekdayToggle}
+          onChange={() => setMonFirst(!monFirst)}
           checked={monFirst}
           className="react-switch"
           onColor="#86d3ff"

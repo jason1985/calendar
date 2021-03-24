@@ -55,7 +55,7 @@
   align-items: center;
 }
 .month {
-  height: 80vh;
+  height: 70vh;
   width: 70vw;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -125,11 +125,6 @@ p {
 }
 
 input {
-  margin-left: 0.7rem;
-}
-
-button {
-  padding: 0 0.2rem;
   margin-left: 0.7rem;
 }
 

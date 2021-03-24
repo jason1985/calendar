@@ -7,15 +7,52 @@ import Task from './Task'
 Modal.setAppElement('#root')
 
 const Day = ({ date, today, current }) => {
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]) //list of items for a day
   const [modalOpen, setModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
-  const [text, setText] = useState('')
-  const [editId, setEditId] = useState('')
-  const [updated, setUpdated] = useState(false)
+  const [text, setText] = useState('') //input text
+  const [editId, setEditId] = useState('') //id of item to edit
+  const [updated, setUpdated] = useState(false) //boolean used to trigger localstorage to be updated
 
+  //refs used to focus() input box after modals are open
   const inputRef = useRef()
   const editInputRef = useRef()
+
+  const updateItemsFromStorage = () => {
+    let info = JSON.parse(localStorage.getItem('calendarInfo'))
+
+    if (info === null) return
+
+    if (info?.[current.year]?.[current.month] === undefined) return
+
+    // console.log(info[current.year][current.month].date)
+    //if it's not null/undefined then map it
+    if (info[current.year][current.month][date]) {
+      setItems(
+        info[current.year][current.month][date].map((item) => {
+          return {
+            id: item.id,
+            icon: item.icon,
+            color: item.color,
+            task: item.task,
+          }
+        })
+      )
+    }
+  }
+
+  const updateStorage = () => {
+    // if it doesn't exist at all create an empty object {}
+    if (localStorage.getItem('calendarInfo') === null) {
+      localStorage.setItem('calendarInfo', JSON.stringify({}))
+    }
+
+    let years = JSON.parse(localStorage.getItem('calendarInfo'))
+
+    _.set(years, `${current.year}.${current.month}.${date}`, items)
+
+    localStorage.setItem('calendarInfo', JSON.stringify(years))
+  }
 
   useEffect(() => {
     updateItemsFromStorage()
@@ -117,37 +154,6 @@ const Day = ({ date, today, current }) => {
     setEditId(id)
     setText(task)
     setEditModalOpen(true)
-  }
-
-  const updateItemsFromStorage = () => {
-    let info = JSON.parse(localStorage.getItem('calendarInfo'))
-
-    //if it's not null/undefined then map it
-    if (info[current.year][current.month][date]) {
-      setItems(
-        info[current.year][current.month][date].map((item) => {
-          return {
-            id: item.id,
-            icon: item.icon,
-            color: item.color,
-            task: item.task,
-          }
-        })
-      )
-    }
-  }
-
-  const updateStorage = () => {
-    // if it doesn't exist at all create an empty object {}
-    if (localStorage.getItem('calendarInfo') === null) {
-      localStorage.setItem('calendarInfo', JSON.stringify({}))
-    }
-
-    let years = JSON.parse(localStorage.getItem('calendarInfo'))
-
-    _.set(years, `${current.year}.${current.month}.${date}`, items)
-
-    localStorage.setItem('calendarInfo', JSON.stringify(years))
   }
 
   return (
