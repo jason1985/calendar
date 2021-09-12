@@ -2,7 +2,7 @@ name: Build and Deploy to GH Pages
 on:
   push:
     paths:
-      - 'src/**' # change later but only runs this if something in src dir changes
+      #- 'src/**' # change later but only runs this if something in src dir changes
     branches:
       - master
 jobs:
